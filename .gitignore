@@ -28,6 +28,6 @@ Thumbs.db
 _UpgradeReport_Files/
 _ReSharper.*/
 
-/vc2013
-/include
-/redources
+NameAnnouncement/vc2013
+NameAnnouncement/include
+NameAnnouncement/resources
