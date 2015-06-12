@@ -27,3 +27,7 @@ Thumbs.db
 [Tt]est[Rr]esults/
 _UpgradeReport_Files/
 _ReSharper.*/
+
+/vc2013
+/include
+/redources
