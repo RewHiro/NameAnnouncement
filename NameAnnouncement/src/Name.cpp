@@ -9,19 +9,19 @@ using namespace ci;
 using namespace ci::app;
 using namespace input;
 
-Name::Name(const std::wstring& name):
+Name::Name(const std::wstring& name) :
 _state(State::WAIT),
 _name(name),
 _pos(Anim<Vec3f>(Vec3f(
-randFloat(-getWindowCenter().x * 3, getWindowCenter().x * 3),
-randFloat(-getWindowCenter().y * 3, getWindowCenter().y * 3),
+randFloat(-getWindowCenter().x * 2, getWindowCenter().x * 2),
+randFloat(-getWindowCenter().y * 2, getWindowCenter().y * 2),
 800.0f
 ))),
 _scale(Anim<Vec3f>(Vec3f::one())),
 _speed(Vec3f(
-randFloat(-1,1),
 randFloat(-1, 1),
-randFloat(-2, 2)
+randFloat(-1, 1),
+randFloat(-1.5f, 1.5f)
 ))
 {
 }
@@ -66,9 +66,15 @@ void Name::reset()
 	_pos.stop();
 	_scale.stop();
 
+	_speed = Vec3f(
+		randFloat(-1, 1),
+		randFloat(-1, 1),
+		randFloat(-1.5f, 1.5f)
+		);
+
 	_pos = Anim<Vec3f>(Vec3f(
-		randFloat(-getWindowCenter().x * 3, getWindowCenter().x * 3),
-		randFloat(-getWindowCenter().y * 3, getWindowCenter().y * 3),
+		randFloat(-getWindowCenter().x * 2, getWindowCenter().x * 2),
+		randFloat(-getWindowCenter().y * 2, getWindowCenter().y * 2),
 		800.0f
 		));
 

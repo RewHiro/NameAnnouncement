@@ -46,7 +46,7 @@ void StarManager::setDrain()
 
 void StarManager::setAnnnoucement()
 {
-	StarManager::getTexture() = loadImage(loadAsset("particle.png"));
+	StarManager::getTexture() = loadImage(loadAsset("textures/particle.png"));
 	for (auto& star : stars)
 	{
 		star->setAnnouncement();
@@ -55,7 +55,7 @@ void StarManager::setAnnnoucement()
 
 void StarManager::reset()
 {
-	StarManager::getTexture() = loadImage(loadAsset("corona.png"));
+	StarManager::getTexture() = loadImage(loadAsset("textures/corona.png"));
 	for (auto& star : stars)
 	{
 		star->reset();
