@@ -7,7 +7,8 @@ class Title : public Scene
 {
 	ci::Font _font;
 	std::vector<std::string>_class_list;
-	unsigned int _select_count;
+	int _select_count;
+	int _index;
 public:
 	Title();
 	SceneType update();

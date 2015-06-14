@@ -15,7 +15,8 @@ using namespace input;
 
 
 Title::Title():
-_select_count(0)
+_select_count(0),
+_index(0)
 {
 	namespace sys = std::tr2::sys;
 	sys::path p("../assets/name_list");
@@ -42,18 +43,22 @@ SceneType Title::update()
 	if(key.isPush(KeyEvent::KEY_UP))
 	{
 		--_select_count;
+		auto delta = static_cast<int>(_class_list.size());
+		_index = std::abs((_select_count + delta) % delta);
 	}
 	else if (key.isPush(KeyEvent::KEY_DOWN))
 	{
 		++_select_count;
+		_index = std::abs(_select_count % static_cast<int>(_class_list.size()));
 	}
 
 	if(key.isPush(KeyEvent::KEY_RETURN))
 	{
 		type = SceneType::STAGE;
-		auto index = _select_count % _class_list.size();
-		Stage::getClassName() = _class_list[index];
+		Stage::getClassName() = _class_list[_index];
 	}
+
+
 
 	return type;
 }
@@ -75,10 +80,9 @@ void Title::draw()
 	gl::pushModelView();
 	gl::translate(getWindowCenter().x, getWindowCenter().y + getWindowCenter().y * 0.25f);
 	gl::scale(0.5f, 0.5f);
-	auto index = _select_count % _class_list.size();
 
 	gl::drawStringCentered(
-		_class_list[index],
+		_class_list[_index],
 		Vec2f::zero(),
 		ColorA::white(),
 		_font
@@ -88,4 +92,5 @@ void Title::draw()
 
 void Title::resize()
 {
+
 }
