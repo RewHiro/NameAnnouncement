@@ -16,7 +16,7 @@ public:
 
 	StarManager();
 
-	static ci::gl::Texture getTexture()
+	static ci::gl::Texture& getTexture()
 	{
 		static ci::gl::Texture instance = 
 			ci::loadImage(ci::app::loadAsset("corona.png"));
@@ -26,4 +26,8 @@ public:
 	void setup();
 	void update();
 	void draw();
+
+	void setDrain();
+	void setAnnnoucement();
+	void reset();
 };

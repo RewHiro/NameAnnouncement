@@ -21,7 +21,7 @@ _scale(Anim<Vec3f>(Vec3f::one())),
 _speed(Vec3f(
 randFloat(-1,1),
 randFloat(-1, 1),
-randFloat(-1, 1)
+randFloat(-2, 2)
 ))
 {
 }
@@ -48,6 +48,7 @@ void Name::wait()
 
 	if(_pos.value().x > SUPREMUM.x || _pos.value().x < INFIMUM.x)
 	{
+
 		_speed.x *= -1;
 	}
 	if (_pos.value().y > SUPREMUM.y || _pos.value().y < INFIMUM.y)
@@ -62,6 +63,9 @@ void Name::wait()
 
 void Name::reset()
 {
+	_pos.stop();
+	_scale.stop();
+
 	_pos = Anim<Vec3f>(Vec3f(
 		randFloat(-getWindowCenter().x * 3, getWindowCenter().x * 3),
 		randFloat(-getWindowCenter().y * 3, getWindowCenter().y * 3),
@@ -99,7 +103,7 @@ void Name::startDirection(const float duration_time)
 {
 	_state = State::DRAIN;
 
-	const float time = 4.0f + duration_time;
+	const float time = 1.0f + duration_time;
 
 	// amplitude êUïù
 	// period 1âÒÇ…Ç‰ÇÍÇÈéûä‘
@@ -125,6 +129,8 @@ void Name::startDirection(const float duration_time)
 void Name::setAnnounce()
 {
 	is_delete = true;
+	_pos.stop();
+	_scale.stop();
 	timeline().apply(&_pos, _pos.value(), Vec3f(0, 0, 600), 4.0f,EaseOutBounce());
 	timeline().apply(&_scale, _scale.value(), Vec3f::one(), 4.0f, EaseOutBounce());
 	_state = State::ANNOUNCE;

@@ -69,9 +69,7 @@ class NameAnnouncementApp : public AppNative {
 void NameAnnouncementApp::drain()
 {
 	if (_state != State::DRAIN)return;
-	if(count > 0){
-		--count;
-	}
+	--count;
 
 	if (count == 0)
 	{
@@ -79,9 +77,9 @@ void NameAnnouncementApp::drain()
 		index = randInt(0, _namelist.size());
 		_namelist.at(index)->setAnnounce();
 		_state = State::ANNOUNCEMENT;
+
+		_star_manager.setAnnnoucement();
 	}
-
-
 }
 
 void NameAnnouncementApp::wait()
@@ -99,13 +97,18 @@ void NameAnnouncementApp::wait()
 	for (auto& name_object : _namelist)
 	{
 		name_object->update();
-
-		if (!key.isPush(KeyEvent::KEY_RETURN))continue;
-		name_object->startDirection(num*0.5f);
-		count = num * 30;
-		num++;
-		_state = State::DRAIN;
 	}
+
+	if (!key.isPush(KeyEvent::KEY_RETURN))return;
+	for (auto& name_object : _namelist)
+	{
+		auto time = easeInQuart(static_cast<float>(num) / _namelist.size()) * 1.0f;
+		name_object->startDirection(time);
+		num++;
+	}
+	_star_manager.setDrain();
+	count = 60 * 3;
+	_state = State::DRAIN;
 }
 
 void NameAnnouncementApp::announce()
@@ -128,6 +131,8 @@ void NameAnnouncementApp::announce()
 		{
 			name->reset();
 		}
+
+		_star_manager.reset();
 	}
 	key.flush();
 }
@@ -140,7 +145,7 @@ void NameAnnouncementApp::setup()
 	
 	_star_manager.setup();
 
-	background_texture = loadImage(loadAsset("background.jpg"));
+	background_texture = loadImage(loadAsset("background.png"));
 
 	light = std::make_unique<gl::Light>(gl::Light::DIRECTIONAL, 0);
 	light->setDirection(Vec3f(0,0,-1));
@@ -168,11 +173,11 @@ void NameAnnouncementApp::setup()
 	gl::enable(GL_TEXTURE_2D);
 	glEnable(GL_COLOR_MATERIAL);
 	glEnable(GL_NORMALIZE);
-
 }
 
 void NameAnnouncementApp::mouseDown( MouseEvent event )
 {
+
 }
 
 void NameAnnouncementApp::update()

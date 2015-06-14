@@ -13,6 +13,7 @@ class Star
 	};
 
 	State _state;
+	ci::ColorA _emission_color;
 	ci::ColorA _color;
 	ci::Anim<ci::Vec3f> _pos;
 	ci::Anim<float> _pos_y;
@@ -28,4 +29,8 @@ public:
 	Star();
 	void update();
 	void draw();
+
+	void setDrain();
+	void setAnnouncement();
+	void reset();
 };
