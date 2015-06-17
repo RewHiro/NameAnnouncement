@@ -4,6 +4,7 @@
 #include "Key.h"
 #include "StarManager.h"
 #include "SceneManager.h"
+#include "Stage.h"
 
 #include "cinder/gl/gl.h"
 #include "cinder\Camera.h"
@@ -11,6 +12,7 @@
 #include "cinder\gl\Light.h"
 #include "cinder\gl\Texture.h"
 #include "cinder\ImageIo.h"
+#include "cinder\Rand.h"
 
 #include <memory>
 
@@ -28,6 +30,7 @@ class NameAnnouncementApp : public AppNative {
   public:
 	void prepareSettings(Settings *settings)final;
 	void setup()final;
+	void shutdown();
 	void mouseDown( MouseEvent event )final;	
 	void update()final;
 	void draw()final;
@@ -39,8 +42,9 @@ void NameAnnouncementApp::prepareSettings(Settings *settings)
 {
 	JsonTree load(loadAsset("window.json"));
 	const auto& objects = load["Window"];
-
 	settings->setWindowSize(objects["SizeX"].getValue<int>(), objects["SizeY"].getValue<int>());
+	SceneManager::getWindowSize() = Vec2f(objects["SizeX"].getValue<float>(), objects["SizeY"].getValue<float>());
+	settings->setFrameRate(60);
 }
 
 void NameAnnouncementApp::setup()
@@ -54,8 +58,33 @@ void NameAnnouncementApp::setup()
 	const auto& objects = load["Font"];
 	auto font_name = objects["Name"].getValue<std::string>();
 	std::string font_root = "font/";
-	Name::setFont(font_root + font_name, objects["Size"].getValue<float>());
+	Name::setFont(font_root + font_name, 100);
+	Name::getFontScele() = objects["Size"].getValue<float>();
 
+	randSeed(std::random_device()());
+
+	JsonTree sound_load(loadAsset("sound/sound.json"));
+
+	std::string sound_root = "sound/";
+	auto drum_se_filename = sound_load["DrainSE"]["FileName"].getValue<std::string>();
+	auto announce_se_filename = sound_load["AnnounceSE"]["FileName"].getValue<std::string>();
+
+	Stage::getDrumSE() = audio::Voice::create(audio::load(loadAsset(sound_root + drum_se_filename)));
+	Stage::getDrumSE()->setVolume(sound_load["DrainSE"]["Volume"].getValue<float>());
+
+	Stage::getAnnounceSE() = audio::Voice::create(audio::load(loadAsset(sound_root + announce_se_filename)));
+	Stage::getAnnounceSE()->setVolume(sound_load["AnnounceSE"]["Volume"].getValue<float>());
+
+	JsonTree effect_load(loadAsset("effect_time.json"));
+	Stage::getDrainTime() = effect_load["DrainOffset"].getValue<float>();
+	Name::getBounceTime() = effect_load["Bounce"].getValue<float>();
+	Stage::getInterbalTime() = effect_load["DrainToAnnouceInterbal"].getValue<int>();
+	
+}
+
+void NameAnnouncementApp::shutdown()
+{
+	_scene_manager->shutdown();
 }
 
 void NameAnnouncementApp::mouseDown( MouseEvent event )

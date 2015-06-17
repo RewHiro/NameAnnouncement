@@ -5,3 +5,4 @@
 //　@param {string} [str] - 変換したいマルチバイト文字列
 //　@param {wstring} [dest] - 変換するwstring
 void widen(const std::string& str, std::wstring& dest);
+void narrow(const std::wstring& str, std::string& dest);

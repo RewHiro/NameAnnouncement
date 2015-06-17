@@ -1,8 +1,15 @@
 #include "Name.h"
+
+#include "Key.h"
+#include "SceneManager.h"
+#include "Stage.h"
+
 #include "cinder\gl\gl.h"
 #include "cinder\Unicode.h"
 #include "cinder\Rand.h"
-#include "Key.h"
+#include "cinder\gl\TextureFont.h"
+#include "cinder\Json.h"
+
 
 
 using namespace ci;
@@ -13,17 +20,18 @@ Name::Name(const std::wstring& name) :
 _state(State::WAIT),
 _name(name),
 _pos(Anim<Vec3f>(Vec3f(
-randFloat(-getWindowCenter().x * 2, getWindowCenter().x * 2),
-randFloat(-getWindowCenter().y * 2, getWindowCenter().y * 2),
+randFloat(-SceneManager::getWindowCenter().x * 2.5f, SceneManager::getWindowCenter().x * 2.5f),
+randFloat(-SceneManager::getWindowCenter().y * 2.5f, SceneManager::getWindowCenter().y * 2.5f),
 800.0f
 ))),
-_scale(Anim<Vec3f>(Vec3f::one())),
+_scale(Anim<Vec3f>(Vec3f::one() * 2)),
 _speed(Vec3f(
 randFloat(-1, 1),
 randFloat(-1, 1),
 randFloat(-1.5f, 1.5f)
 ))
 {
+	_scale.value() = Vec3f::one() * getFontScele();
 }
 
 void Name::wait()
@@ -34,30 +42,35 @@ void Name::wait()
 	//Å@è„å¿
 	static const Vec3f SUPREMUM =
 		Vec3f(
-		getWindowCenter().x + 100,
-		getWindowCenter().y + 100,
+		SceneManager::getWindowCenter().x * 2.5f,
+		SceneManager::getWindowCenter().y * 2.5f,
 		900.0f
 		);
 	//Å@â∫å¿
 	static const Vec3f INFIMUM =
 		Vec3f(
-		-getWindowCenter().x - 100,
-		-getWindowCenter().y - 100,
+		-SceneManager::getWindowCenter().x * 2.5f,
+		-SceneManager::getWindowCenter().y * 2.5f,
 		700.0f
-		);;
+		);
 
 	if(_pos.value().x > SUPREMUM.x || _pos.value().x < INFIMUM.x)
 	{
-
 		_speed.x *= -1;
+		_pos.value().x = std::max(_pos.value().x, INFIMUM.x);
+		_pos.value().x = std::min(_pos.value().x, SUPREMUM.x);
 	}
 	if (_pos.value().y > SUPREMUM.y || _pos.value().y < INFIMUM.y)
 	{
 		_speed.y *= -1;
+		_pos.value().y = std::max(_pos.value().y, INFIMUM.y);
+		_pos.value().y = std::min(_pos.value().y, SUPREMUM.y);
 	}
 	if (_pos.value().z > SUPREMUM.z || _pos.value().z < INFIMUM.z)
 	{
 		_speed.z *= -1;
+		_pos.value().z = std::max(_pos.value().z, INFIMUM.z);
+		_pos.value().z = std::min(_pos.value().z, SUPREMUM.z);
 	}
 }
 
@@ -73,13 +86,13 @@ void Name::reset()
 		);
 
 	_pos = Anim<Vec3f>(Vec3f(
-		randFloat(-getWindowCenter().x * 2, getWindowCenter().x * 2),
-		randFloat(-getWindowCenter().y * 2, getWindowCenter().y * 2),
+		randFloat(-SceneManager::getWindowCenter().x * 2.5f, SceneManager::getWindowCenter().x * 2.5f),
+		randFloat(-SceneManager::getWindowCenter().y * 2.5f, SceneManager::getWindowCenter().y * 2.5f),
 		800.0f
 		));
 
-		_scale = Anim<Vec3f>(Vec3f::one());
-		_state = State::WAIT;
+	_scale.value() = Vec3f::one() * getFontScele();
+	_state = State::WAIT;
 }
 
 void Name::update()
@@ -109,7 +122,7 @@ void Name::startDirection(const float duration_time)
 {
 	_state = State::DRAIN;
 
-	const float time = 1.0f + duration_time;
+	const float time = duration_time + Stage::getDrainTime();
 
 	// amplitude êUïù
 	// period 1âÒÇ…Ç‰ÇÍÇÈéûä‘
@@ -137,7 +150,7 @@ void Name::setAnnounce()
 	is_delete = true;
 	_pos.stop();
 	_scale.stop();
-	timeline().apply(&_pos, _pos.value(), Vec3f(0, 0, 600), 4.0f,EaseOutBounce());
-	timeline().apply(&_scale, _scale.value(), Vec3f::one(), 4.0f, EaseOutBounce());
+	timeline().apply(&_pos, _pos.value(), Vec3f(0, 0, 600), getBounceTime(),EaseOutBounce());
+	timeline().apply(&_scale, _scale.value(), Vec3f::one() * getFontScele(), getBounceTime(), EaseOutBounce());
 	_state = State::ANNOUNCE;
 }

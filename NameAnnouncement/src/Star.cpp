@@ -1,8 +1,11 @@
 #include "Star.h"
-#include "cinder\gl\gl.h"
 #include "StarManager.h"
+#include "Stage.h"
+
+#include "cinder\gl\gl.h"
 #include "cinder\Rand.h"
 #include "cinder\app\App.h"
+#include "cinder\Json.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -21,6 +24,10 @@ randFloat(200.0f,800.0f)
 _pos_y(Anim<float>(_pos.value().y)),
 _color_radian(randFloat(0.0f,1.07f))
 {
+	
+	JsonTree load(loadAsset("textures/texture.json"));
+	_color = ColorA(load["Wait"]["Color"][0].getValue<float>(), load["Wait"]["Color"][1].getValue<float>(), load["Wait"]["Color"][2].getValue<float>());
+
 	timeline().apply(
 		&_pos,
 		_pos.value(),
@@ -192,8 +199,8 @@ void Star::setDrain()
 	_pos.stop();
 	_pos_y.stop();
 	_state = State::DRAIN;
-	timeline().apply(&_pos, _pos.value(), Vec3f(0,0,1000), 1.5f, easeInExpo);
-	timeline().apply(&_pos_y, _pos_y.value(), 0.0f, 1.5f, easeInExpo);
+	timeline().apply(&_pos, _pos.value(), Vec3f(0, 0, 1000), Stage::getDrainTime() + 1.0f, easeInExpo);
+	timeline().apply(&_pos_y, _pos_y.value(), 0.0f, Stage::getDrainTime() + 1.0f, easeInExpo);
 }
 
 void Star::setAnnouncement()

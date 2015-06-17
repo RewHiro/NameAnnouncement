@@ -10,6 +10,7 @@
 #include "cinder\gl\Texture.h"
 #include "cinder\ImageIo.h"
 #include "cinder\app\App.h"
+#include "cinder\audio\Voice.h"
 
 #include <memory>
 
@@ -39,11 +40,14 @@ class Stage : public Scene
 	int _num = 0;
 	int _count = 0;
 	int _index = 0;
+	int announce_count = 60 * 2;
 
 	void drain();
 	void wait();
 	void announce();
 	void transiton();
+	void direction();
+	void save();
 
 public:
 
@@ -51,10 +55,35 @@ public:
 	SceneType update();
 	void draw();
 	void resize();
+	void shutdown()final;
 
 	static std::string& getClassName()
 	{
 		static std::string instance;
 		return instance;
+	}
+
+	static ci::audio::VoiceRef& getDrumSE()
+	{
+		static ci::audio::VoiceRef instance;
+		return instance;
+	}
+
+	static ci::audio::VoiceRef& getAnnounceSE()
+	{
+		static ci::audio::VoiceRef instance;
+		return instance;
+	}
+
+	static float& getDrainTime()
+	{
+		static float instance;
+		return instance;
+	}
+
+	static int& getInterbalTime()
+	{
+		static int insatnce;
+		return insatnce;
 	}
 };

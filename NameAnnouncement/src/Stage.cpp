@@ -10,12 +10,14 @@ using namespace ci::app;
 using namespace input;
 
 
-
-
 Stage::Stage():
-_light(std::make_unique<gl::Light>(gl::Light::DIRECTIONAL, 0)),
-_background_texture(loadImage(loadAsset("textures/background.png")))
+_light(std::make_unique<gl::Light>(gl::Light::DIRECTIONAL, 0))
 {
+
+	JsonTree texture_load(loadAsset("textures/texture.json"));
+	std::string texture_root = "textures/";
+	auto texture_name = texture_load["Background"].getValue<std::string>();
+	_background_texture = loadImage(loadAsset(texture_root + texture_name));
 	setlocale(LC_CTYPE, "");
 
 	_star_manager.setup();
@@ -48,10 +50,9 @@ _background_texture(loadImage(loadAsset("textures/background.png")))
 void Stage::drain()
 {
 	if (_state != State::DRAIN)return;
+	if (!_namelist.at(_namelist.size() - 1)->isFinishTween()) return;
 	--_count;
-
-	if (_count != 0) return;
-
+	if (_count > 0)return;
 	_num = 0;
 	_index = randInt(0, _namelist.size());
 	_namelist.at(_index)->setAnnounce();
@@ -78,24 +79,31 @@ void Stage::wait()
 	}
 
 	if (!key.isPush(KeyEvent::KEY_RETURN))return;
+	getDrumSE()->start();
+
 	for (auto& name_object : _namelist)
 	{
-		auto time = easeInQuart(static_cast<float>(_num) / _namelist.size()) * 1.0f;
+		++_num;
+		auto time = easeInQuart(_num / static_cast<float>(_namelist.size())) * 1.0f;
 		name_object->startDirection(time);
-		_num++;
 	}
 	_star_manager.setDrain();
-	_count = 60 * 3;
+
+	_count = getInterbalTime();
 	_state = State::DRAIN;
 }
 
 void Stage::announce()
 {
+
 	if (_state != State::ANNOUNCEMENT)return;
 	auto& key = Key::getInstance();
-
+	--announce_count;
+	if (announce_count == 115)	getAnnounceSE()->start();
 	if (key.isPush(KeyEvent::KEY_RETURN))
 	{
+		if (announce_count > 0)return;
+
 		_namelist.erase(std::remove_if(_namelist.begin(), _namelist.end(), [](const std::weak_ptr<Name>& name)
 		{
 			return name.lock()->isDelete();
@@ -111,8 +119,18 @@ void Stage::announce()
 		}
 
 		_star_manager.reset();
+		announce_count = 60 * 2;
+		key.flush();
 	}
-	key.flush();
+}
+
+void Stage::direction()
+{
+	if (_namelist.empty())return;
+	announce();
+	wait();
+	drain();
+
 }
 
 void Stage::transiton()
@@ -123,12 +141,27 @@ void Stage::transiton()
 	type = SceneType::TITLE;
 }
 
+void Stage::save()
+{
+	if (_namelist.empty())return;
+	const auto& key = Key::getInstance();
+	JsonTree load = JsonTree::makeArray("Name");
+
+	for(auto& name : _namelist)
+	{
+		std::string name_str;
+		JsonTree json;
+		narrow(name->getName(), name_str);
+		load.pushBack(JsonTree("", name_str));
+	}
+
+	load.write(writeFile(getAssetPath("name_list") / "load.json"), JsonTree::WriteOptions().createDocument());
+}
+
 SceneType Stage::update()
 {
 	_star_manager.update();
-	announce();
-	wait();
-	drain();
+	direction();
 	transiton();
 	return type;
 }
@@ -158,4 +191,9 @@ void Stage::draw()
 void Stage::resize()
 {
 
+}
+
+void Stage::shutdown()
+{
+	save();
 }

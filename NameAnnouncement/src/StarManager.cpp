@@ -1,5 +1,6 @@
 #include "StarManager.h"
 #include "cinder\app\App.h"
+#include "cinder\Json.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -7,7 +8,10 @@ using namespace ci::app;
 StarManager::StarManager():
 STAR_NUM(200)
 {
-
+	JsonTree load(loadAsset("textures/texture.json"));
+	std::string texture_root = "textures/";
+	auto texture_name = load["Wait"]["FileName"].getValue<std::string>();
+	getTexture() = ci::loadImage(ci::app::loadAsset(texture_root + texture_name));
 }
 
 void StarManager::setup()
@@ -46,7 +50,10 @@ void StarManager::setDrain()
 
 void StarManager::setAnnnoucement()
 {
-	StarManager::getTexture() = loadImage(loadAsset("textures/particle.png"));
+	JsonTree load(loadAsset("textures/texture.json"));
+	std::string texture_root = "textures/";
+	auto texture_name = load["Announce"].getValue<std::string>();
+	getTexture() = ci::loadImage(ci::app::loadAsset(texture_root + texture_name));
 	for (auto& star : stars)
 	{
 		star->setAnnouncement();
@@ -55,7 +62,10 @@ void StarManager::setAnnnoucement()
 
 void StarManager::reset()
 {
-	StarManager::getTexture() = loadImage(loadAsset("textures/corona.png"));
+	JsonTree load(loadAsset("textures/texture.json"));
+	std::string texture_root = "textures/";
+	auto texture_name = load["Wait"]["FileName"].getValue<std::string>();
+	getTexture() = ci::loadImage(ci::app::loadAsset(texture_root + texture_name));
 	for (auto& star : stars)
 	{
 		star->reset();

@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "SceneFactory.h"
+#include "Key.h"
 
 
 SceneManager::SceneManager():
@@ -21,10 +22,16 @@ void SceneManager::update()
 	scene = SceneFactory::getInstance().create(tmp_scene_type);
 	scene->setSceneType(tmp_scene_type);
 	type = tmp_scene_type;
+	input::Key::getInstance().clear();
 
 }
 
 void SceneManager::draw()
 {
 	scene->draw();
+}
+
+void SceneManager::shutdown()
+{
+	scene->shutdown();
 }

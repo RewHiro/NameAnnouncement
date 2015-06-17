@@ -18,8 +18,7 @@ public:
 
 	static ci::gl::Texture& getTexture()
 	{
-		static ci::gl::Texture instance = 
-			ci::loadImage(ci::app::loadAsset("textures/corona.png"));
+		static ci::gl::Texture instance;
 		return instance;
 	}
 

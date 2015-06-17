@@ -20,5 +20,6 @@ public:
 	virtual SceneType update() = 0;
 	virtual void draw() = 0;
 	virtual void resize(){}
+	virtual void shutdown(){}
 	void setSceneType(const SceneType type){ this->type = type; }
 };

@@ -1,0 +1,8 @@
+{
+    "Wait": {
+        "FileName": "corona.png",
+        "Color": [0,1,0]
+    },
+    "Announce": "particle.png",
+    "Background": "background.png"
+}

@@ -88,6 +88,58 @@ void Title::draw()
 		_font
 		);
 	gl::popModelView();
+
+
+	std::wstring esc_str = L"ESC:終了";
+	gl::pushModelView();
+	gl::scale(0.3f, 0.3f);
+
+	gl::drawString(
+		toUtf8((char16_t*)esc_str.c_str()),
+		Vec2f::zero(),
+		ColorA::white(),
+		_font
+		);
+	gl::popModelView();
+
+	std::wstring enter_str = L"ENTER:決定";
+	gl::pushModelView();
+	gl::translate(getWindowSize() - Vec2f(150, 50));
+	gl::scale(0.3f, 0.3f);
+
+	gl::drawString(
+		toUtf8((char16_t*)enter_str.c_str()),
+		Vec2f::zero(),
+		ColorA::white(),
+		_font
+		);
+	gl::popModelView();
+
+	std::wstring up_str = L"↑:前のクラス";
+	gl::pushModelView();
+	gl::translate(getWindowSize() - Vec2f(160, 50+40 *2));
+	gl::scale(0.3f, 0.3f);
+
+	gl::drawString(
+		toUtf8((char16_t*)up_str.c_str()),
+		Vec2f::zero(),
+		ColorA::white(),
+		_font
+		);
+	gl::popModelView();
+
+	std::wstring down_str = L"↓:次のクラス";
+	gl::pushModelView();
+	gl::translate(getWindowSize() - Vec2f(160, 50+ 40));
+	gl::scale(0.3f, 0.3f);
+
+	gl::drawString(
+		toUtf8((char16_t*)down_str.c_str()),
+		Vec2f::zero(),
+		ColorA::white(),
+		_font
+		);
+	gl::popModelView();
 }
 
 void Title::resize()

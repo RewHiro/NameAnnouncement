@@ -11,3 +11,12 @@ void widen(const std::string& str, std::wstring& dest)
 	dest = wcs;
 	delete[]wcs;
 }
+
+void narrow(const std::wstring& str, std::string& dest)
+{
+	char* mbs = new char[str.length() * MB_CUR_MAX + 1];
+	size_t ret;
+	wcstombs_s(&ret, mbs, str.length()  * MB_CUR_MAX + 1, str.c_str(), _TRUNCATE);
+	dest = mbs;
+	delete[]mbs;
+}

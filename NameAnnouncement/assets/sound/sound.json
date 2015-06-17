@@ -1,0 +1,11 @@
+{
+    "DrainSE": {
+        "FileName": "drumroll.wav",
+        "Volume": 1.0
+    },
+    "AnnounceSE": {
+        "FileName": "Phrase02-1.wav",
+        "Volume": 1.0
+    }
+
+}
